@@ -170,7 +170,7 @@ export function CalendarView() {
                         className={`text-xs truncate px-1.5 py-0.5 rounded ${
                           task.completed 
                             ? "bg-green-500/10 text-green-400 line-through" 
-                            : "bg-amber-500/10 text-amber-400"
+                            : "bg-purple-500/10 text-purple-400"
                         }`}
                       >
                         {task.title}
