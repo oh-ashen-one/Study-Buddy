@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { useLocation } from "wouter";
+import { useState, useEffect, useCallback } from "react";
+import { useSearch, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -16,22 +16,30 @@ type View = "home" | "chat" | "schedule" | "tasks" | "calendar" | "spots";
 
 const VALID_VIEWS: View[] = ["home", "chat", "schedule", "tasks", "calendar", "spots"];
 
-function getViewFromUrl(): View {
-  const params = new URLSearchParams(window.location.search);
+function parseViewFromSearch(searchString: string): View {
+  const params = new URLSearchParams(searchString);
   const view = params.get("view");
   if (view && VALID_VIEWS.includes(view as View)) {
     return view as View;
   }
-  return "home"; // Default to home/overview
+  return "home";
 }
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const searchString = useSearch();
   const [, setLocation] = useLocation();
-  const activeView = getViewFromUrl();
+  
+  const [activeView, setActiveViewState] = useState<View>(() => parseViewFromSearch(searchString));
+
+  useEffect(() => {
+    const newView = parseViewFromSearch(searchString);
+    setActiveViewState(newView);
+  }, [searchString]);
 
   const setActiveView = useCallback((view: View) => {
     const url = view === "home" ? "/" : `/?view=${view}`;
+    setActiveViewState(view);
     setLocation(url);
   }, [setLocation]);
 
