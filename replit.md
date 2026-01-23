@@ -2,70 +2,163 @@
 
 ## Overview
 
-Study Buddy is an all-in-one web application designed to help college students organize their academic lives. It combines AI-powered chat assistance, schedule management, task tracking, and calendar views into a single cohesive platform. The application features a dark-mode-first design with a clean, modern interface built using React and shadcn/ui components.
+Study Buddy is an AI-powered college command center that helps students organize their academic lives. It combines schedule management, assignment tracking, study spot discovery, and AI assistance into one clean, dark-mode interface.
 
-The core value proposition is providing college students with personalized AI assistance that understands their university, major, year, and course schedule to deliver relevant study recommendations and academic support.
+**Design Philosophy:** Clean, minimal, dark mode. Think Notion + Linear. Never generic. Never boring.
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- Dark mode always
+- Gold as primary accent color (#c9a227)
+- Direct, human language - no AI buzzwords
+- Mobile-first responsive design
+
+## Design System - MANDATORY
+
+### Color Palette
+
+```css
+/* Backgrounds */
+--bg-primary: #0f0f0f;
+--bg-secondary: #1a1a1a;
+--bg-elevated: #252525;
+
+/* Text */
+--text-primary: #f5f5f5;
+--text-secondary: #a0a0a0;
+--text-muted: #666666;
+
+/* Accents */
+--accent-gold: #c9a227;      /* Primary accent */
+--accent-teal: #2dd4bf;      /* Secondary accent */
+--accent-coral: #f472b6;     /* Tertiary accent */
+
+/* Semantic */
+--success: #22c55e;
+--warning: #eab308;
+--error: #ef4444;
+
+/* Borders */
+--border-subtle: rgba(255, 255, 255, 0.08);
+--border-visible: rgba(255, 255, 255, 0.15);
+```
+
+### Banned Design Elements (AI Slop)
+
+- Purple/violet gradients
+- Glassmorphism/frosted glass effects
+- Generic blue (#007bff)
+- Rounded everything (border-radius: 9999px)
+- Rainbow gradients
+- Gratuitous blur effects
+
+### Animation Guidelines
+
+- Standard easing: `cubic-bezier(0.22, 1, 0.36, 1)`
+- Fast duration: 150ms
+- Normal duration: 250ms
+- Slow duration: 400ms
+- Always respect `prefers-reduced-motion`
+
+### Spacing Scale
+
+Use only: 4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px
+
+## Writing Style
+
+### Banned Phrases (Delete on Sight)
+
+- "Dive into..."
+- "Unleash the power of..."
+- "Elevate your..."
+- "Seamlessly integrate..."
+- "Cutting-edge..."
+- "Revolutionary..."
+- "Game-changing..."
+- "Harness the potential..."
+- "Leverage..."
+
+### Good Writing
+
+- **Direct** - Say what you mean
+- **Specific** - Use concrete details
+- **Human** - Write like you talk
+- **Brief** - Cut unnecessary words
 
 ## System Architecture
 
 ### Frontend Architecture
 - **Framework**: React with TypeScript, bundled using Vite
 - **Routing**: Wouter for lightweight client-side routing
-- **State Management**: TanStack React Query for server state and caching
-- **UI Components**: shadcn/ui component library built on Radix UI primitives
-- **Styling**: Tailwind CSS with custom CSS variables for theming (dark mode by default)
+- **State Management**: TanStack React Query for server state
+- **UI Components**: shadcn/ui built on Radix UI
+- **Styling**: Tailwind CSS with custom CSS variables
 - **Path Aliases**: `@/` maps to client/src, `@shared/` maps to shared folder
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js
-- **Language**: TypeScript compiled with tsx for development, esbuild for production
+- **Language**: TypeScript
 - **API Design**: RESTful endpoints under `/api/` prefix
-- **Authentication**: Replit Auth with OpenID Connect, session-based with PostgreSQL session store
-- **AI Integration**: OpenAI API via Replit AI Integrations for chat, image generation, and audio processing
+- **Authentication**: Replit Auth with OpenID Connect
+- **AI Integration**: OpenAI via Replit AI Integrations
 
 ### Data Storage
 - **Database**: PostgreSQL with Drizzle ORM
-- **Schema Location**: `shared/schema.ts` for shared type definitions
-- **Migrations**: Drizzle Kit with `db:push` command for schema synchronization
+- **Schema Location**: `shared/schema.ts`
+- **Migrations**: Drizzle Kit with `db:push` command
 - **Session Storage**: PostgreSQL via connect-pg-simple
 
 ### Key Data Models
-- **User Profiles**: Stores university, major, year, and onboarding status
-- **Courses**: Schedule information with days, times, professors, locations
-- **Tasks**: To-do items with priorities, due dates, and course associations
-- **Study Chats**: AI conversation history with message threading
+- **User Profiles**: University, major, year, onboarding status
+- **Courses**: Schedule with days, times, professors, locations
+- **Tasks**: Assignments with priorities, due dates, course links
+- **Study Chats**: AI conversation history
 - **Shared Answers**: Shareable AI responses with unique IDs
 
-### Application Flow
-1. Users authenticate via Replit Auth
-2. New users complete onboarding (university, major, year selection)
-3. Main dashboard provides sidebar navigation between Chat, Schedule, Tasks, and Calendar views
-4. AI chat has context about user's academic profile and courses for personalized responses
+## Security Rules - NON-NEGOTIABLE
 
-## External Dependencies
+### API Keys & Secrets
+- NEVER hardcode API keys
+- ALWAYS use Replit Secrets
+- ALWAYS validate environment variables exist on startup
 
-### Third-Party Services
-- **OpenAI API**: Powers the AI chat assistant, accessed through Replit AI Integrations environment variables (`AI_INTEGRATIONS_OPENAI_API_KEY`, `AI_INTEGRATIONS_OPENAI_BASE_URL`)
-- **Replit Auth**: OAuth/OIDC authentication provider using Replit's built-in identity service
-- **PostgreSQL**: Primary database, connection via `DATABASE_URL` environment variable
+### Input Validation
+- Trust nothing from the user
+- Validate and sanitize all inputs
+- Use parameterized queries always
 
-### Key NPM Packages
-- **drizzle-orm/drizzle-kit**: Database ORM and migration tooling
-- **openai**: Official OpenAI SDK for AI features
-- **passport/openid-client**: Authentication middleware for Replit Auth
-- **express-session/connect-pg-simple**: Session management with PostgreSQL backing
-- **@tanstack/react-query**: Data fetching and caching
-- **@radix-ui/***: Accessible UI primitives for shadcn/ui components
-- **date-fns**: Date manipulation utilities
+### Session Security
+- httpOnly: true
+- secure: true
+- sameSite: 'strict'
 
-### Environment Variables Required
+## Environment Variables Required
+
 - `DATABASE_URL`: PostgreSQL connection string
 - `SESSION_SECRET`: Secret for session encryption
 - `AI_INTEGRATIONS_OPENAI_API_KEY`: OpenAI API key via Replit
 - `AI_INTEGRATIONS_OPENAI_BASE_URL`: OpenAI base URL via Replit
-- `ISSUER_URL`: Replit OIDC issuer (defaults to https://replit.com/oidc)
-- `REPL_ID`: Replit environment identifier
+
+## File Structure
+
+```
+client/src/
+├── components/     # Reusable UI components
+├── pages/          # Route pages
+├── hooks/          # Custom React hooks
+├── lib/            # Utilities and helpers
+server/
+├── routes.ts       # API route handlers
+├── storage.ts      # Database operations
+├── db.ts           # Database connection
+shared/
+├── schema.ts       # Database schema and types
+```
+
+## Recent Changes
+
+- Initial project setup with full stack implementation
+- Dark mode design system with gold accent
+- AI chat with streaming responses
+- Schedule management with AI parsing
+- Task tracking with calendar integration

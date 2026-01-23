@@ -326,7 +326,7 @@ export function TasksView() {
                   data-testid={`task-item-${task.id}`}
                 >
                   <Checkbox
-                    checked={task.completed}
+                    checked={task.completed ?? false}
                     onCheckedChange={(checked) => 
                       toggleTask.mutate({ id: task.id, completed: checked as boolean })
                     }

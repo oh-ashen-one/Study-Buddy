@@ -31,7 +31,7 @@ import {
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const DAY_COLORS: Record<string, string> = {
   Monday: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  Tuesday: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  Tuesday: "bg-teal-500/10 text-teal-400 border-teal-500/20",
   Wednesday: "bg-green-500/10 text-green-400 border-green-500/20",
   Thursday: "bg-orange-500/10 text-orange-400 border-orange-500/20",
   Friday: "bg-pink-500/10 text-pink-400 border-pink-500/20",

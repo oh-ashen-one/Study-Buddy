@@ -21,27 +21,27 @@
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 5.3% 26.1%;
   --sidebar-border: 240 5.9% 90%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-primary: 45 75% 47%;
+  --sidebar-primary-foreground: 0 0% 10%;
   --sidebar-accent: 240 4.8% 95.9%;
   --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-ring: 45 75% 47%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
   --popover-border: 240 5.9% 90%;
-  --primary: 262 83% 58%;
-  --primary-foreground: 0 0% 100%;
+  --primary: 45 75% 47%;
+  --primary-foreground: 0 0% 10%;
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
   --muted-foreground: 240 3.8% 46.1%;
-  --accent: 262 83% 95%;
-  --accent-foreground: 262 83% 30%;
+  --accent: 45 70% 95%;
+  --accent-foreground: 45 75% 30%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
   --input: 240 5.9% 90%;
-  --ring: 262 83% 58%;
-  --chart-1: 262 83% 58%;
+  --ring: 45 75% 47%;
+  --chart-1: 45 75% 47%;
   --chart-2: 173 58% 39%;
   --chart-3: 197 37% 24%;
   --chart-4: 43 74% 66%;
@@ -88,63 +88,63 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  /* Deep dark background with subtle purple undertone */
-  --background: 240 10% 6%;
-  --foreground: 0 0% 95%;
+  /* Deep dark background - #0f0f0f */
+  --background: 0 0% 6%;
+  --foreground: 0 0% 96%;
 
   /* Subtle borders */
-  --border: 240 6% 15%;
+  --border: 0 0% 15%;
 
-  /* Cards slightly elevated */
-  --card: 240 8% 9%;
-  --card-foreground: 0 0% 95%;
-  --card-border: 240 6% 15%;
+  /* Cards slightly elevated - #1a1a1a */
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 96%;
+  --card-border: 0 0% 15%;
 
-  /* Sidebar - slightly different shade for visual separation */
-  --sidebar: 240 8% 8%;
-  --sidebar-foreground: 240 5% 85%;
-  --sidebar-border: 240 6% 15%;
-  --sidebar-primary: 262 83% 62%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 262 40% 18%;
-  --sidebar-accent-foreground: 262 60% 85%;
-  --sidebar-ring: 262 83% 62%;
+  /* Sidebar - #1a1a1a with slight separation */
+  --sidebar: 0 0% 10%;
+  --sidebar-foreground: 0 0% 85%;
+  --sidebar-border: 0 0% 15%;
+  --sidebar-primary: 45 75% 47%;
+  --sidebar-primary-foreground: 0 0% 10%;
+  --sidebar-accent: 45 40% 18%;
+  --sidebar-accent-foreground: 45 60% 85%;
+  --sidebar-ring: 45 75% 47%;
 
   /* Popovers and dropdowns */
-  --popover: 240 8% 10%;
-  --popover-foreground: 0 0% 95%;
-  --popover-border: 240 6% 18%;
+  --popover: 0 0% 10%;
+  --popover-foreground: 0 0% 96%;
+  --popover-border: 0 0% 18%;
 
-  /* Primary - Vibrant purple for Study Buddy brand */
-  --primary: 262 83% 62%;
-  --primary-foreground: 0 0% 100%;
+  /* Primary - Rich Gold #c9a227 */
+  --primary: 45 75% 47%;
+  --primary-foreground: 0 0% 10%;
 
   /* Secondary - Muted surface */
-  --secondary: 240 6% 15%;
+  --secondary: 0 0% 15%;
   --secondary-foreground: 0 0% 90%;
 
   /* Muted text and backgrounds */
-  --muted: 240 6% 15%;
-  --muted-foreground: 240 5% 55%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 55%;
 
-  /* Accent - Subtle purple highlight */
-  --accent: 262 50% 20%;
-  --accent-foreground: 262 60% 85%;
+  /* Accent - Subtle gold highlight */
+  --accent: 45 50% 18%;
+  --accent-foreground: 45 60% 85%;
 
   /* Destructive - Error red */
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
   /* Input borders - higher contrast for visibility */
-  --input: 240 6% 20%;
-  --ring: 262 83% 62%;
+  --input: 0 0% 20%;
+  --ring: 45 75% 47%;
 
-  /* Chart colors - Vibrant palette */
-  --chart-1: 262 83% 62%;
-  --chart-2: 173 80% 45%;
-  --chart-3: 47 96% 60%;
+  /* Chart colors - Vibrant palette with gold, teal, coral */
+  --chart-1: 45 75% 47%;
+  --chart-2: 168 76% 50%;
+  --chart-3: 330 80% 65%;
   --chart-4: 198 93% 60%;
-  --chart-5: 339 90% 65%;
+  --chart-5: 15 80% 55%;
 
   --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
@@ -267,17 +267,17 @@
     inset: -1px;
   }
 
-  /* Gradient text for branding */
+  /* Gradient text for branding - Gold gradient */
   .gradient-text {
-    background: linear-gradient(135deg, hsl(262, 83%, 62%) 0%, hsl(280, 80%, 70%) 50%, hsl(262, 83%, 62%) 100%);
+    background: linear-gradient(135deg, hsl(45, 75%, 47%) 0%, hsl(45, 85%, 55%) 50%, hsl(45, 75%, 47%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Subtle glow effect for focus states */
+  /* Subtle glow effect for focus states - Gold glow */
   .glow-primary {
-    box-shadow: 0 0 20px -5px hsl(262, 83%, 62%, 0.4);
+    box-shadow: 0 0 20px -5px hsl(45, 75%, 47%, 0.4);
   }
 
   /* Typing animation for AI */

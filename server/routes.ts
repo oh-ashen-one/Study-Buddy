@@ -347,7 +347,7 @@ Be encouraging but realistic. Tailor your advice to the student's level.`;
   // Shared answers routes
   app.get("/api/shared-answers/:shareId", async (req: Request, res: Response) => {
     try {
-      const { shareId } = req.params;
+      const shareId = req.params.shareId as string;
       const answer = await storage.getSharedAnswer(shareId);
       
       if (!answer) {
