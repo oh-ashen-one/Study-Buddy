@@ -19,14 +19,15 @@ import {
   CalendarDays, 
   LogOut,
   GraduationCap,
-  Settings
+  Settings,
+  MapPin
 } from "lucide-react";
 import type { User } from "@shared/models/auth";
 import type { UserProfile } from "@shared/schema";
 
 interface AppSidebarProps {
   activeView: string;
-  onViewChange: (view: "chat" | "schedule" | "tasks" | "calendar") => void;
+  onViewChange: (view: "chat" | "schedule" | "tasks" | "calendar" | "spots") => void;
   user: User | null | undefined;
   profile: UserProfile | undefined;
 }
@@ -36,6 +37,7 @@ const menuItems = [
   { id: "schedule", title: "Schedule", icon: Calendar },
   { id: "tasks", title: "Tasks", icon: CheckSquare },
   { id: "calendar", title: "Calendar", icon: CalendarDays },
+  { id: "spots", title: "Study Spots", icon: MapPin },
 ] as const;
 
 export function AppSidebar({ activeView, onViewChange, user, profile }: AppSidebarProps) {

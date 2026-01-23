@@ -54,7 +54,7 @@ export default function SharedAnswerPage() {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">
           <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-4">
-            <MessageSquare className="w-8 h-8 text-destructive" />
+            <MessageSquare className="w-8 h-8 text-destructive" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold mb-2">Answer Not Found</h1>
           <p className="text-muted-foreground mb-6">
@@ -75,13 +75,13 @@ export default function SharedAnswerPage() {
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-primary" />
+              <GraduationCap className="w-5 h-5 text-primary" aria-hidden="true" />
             </div>
             <span className="font-semibold">Study Buddy</span>
           </div>
           <Button variant="outline" asChild>
             <a href="/" className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               Open App
             </a>
           </Button>
@@ -101,7 +101,7 @@ export default function SharedAnswerPage() {
             <div className="flex gap-3">
               <Avatar className="w-8 h-8 shrink-0">
                 <AvatarFallback className="bg-muted">
-                  <User className="w-4 h-4" />
+                  <User className="w-4 h-4" aria-hidden="true" />
                 </AvatarFallback>
               </Avatar>
               <div className="bg-primary text-primary-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[90%]">
@@ -114,7 +114,7 @@ export default function SharedAnswerPage() {
           <div className="flex gap-3">
             <Avatar className="w-8 h-8 shrink-0">
               <AvatarFallback className="bg-primary/10">
-                <Brain className="w-4 h-4 text-primary" />
+                <Brain className="w-4 h-4 text-primary" aria-hidden="true" />
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
@@ -131,12 +131,12 @@ export default function SharedAnswerPage() {
                 >
                   {copied ? (
                     <>
-                      <Check className="w-4 h-4 text-green-500" />
+                      <Check className="w-4 h-4 text-green-500" aria-hidden="true" />
                       Copied!
                     </>
                   ) : (
                     <>
-                      <Copy className="w-4 h-4" />
+                      <Copy className="w-4 h-4" aria-hidden="true" />
                       Copy Answer
                     </>
                   )}
@@ -150,7 +150,7 @@ export default function SharedAnswerPage() {
         <Card className="mt-12 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
-              <Brain className="w-6 h-6 text-primary" />
+              <Brain className="w-6 h-6 text-primary" aria-hidden="true" />
             </div>
             <h3 className="text-lg font-semibold mb-2">Want your own AI study assistant?</h3>
             <p className="text-sm text-muted-foreground mb-4">

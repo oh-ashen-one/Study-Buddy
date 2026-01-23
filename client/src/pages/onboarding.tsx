@@ -104,7 +104,7 @@ export default function Onboarding() {
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-            <GraduationCap className="w-6 h-6 text-primary" />
+            <GraduationCap className="w-6 h-6 text-primary" aria-hidden="true" />
           </div>
           <span className="text-xl font-bold">Study Buddy</span>
         </div>
@@ -127,7 +127,7 @@ export default function Onboarding() {
             <div className="space-y-6 animate-fade-in">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Building2 className="w-8 h-8 text-primary" />
+                  <Building2 className="w-8 h-8 text-primary" aria-hidden="true" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">What university are you attending?</h2>
                 <p className="text-muted-foreground">This helps us personalize your study recommendations</p>
@@ -137,9 +137,10 @@ export default function Onboarding() {
                 <Label htmlFor="university">University Name</Label>
                 <Input
                   id="university"
-                  placeholder="e.g., Stanford University"
+                  placeholder="e.g., Stanford University…"
                   value={university}
                   onChange={(e) => setUniversity(e.target.value)}
+                  autoComplete="organization"
                   data-testid="input-university"
                 />
               </div>
@@ -150,7 +151,7 @@ export default function Onboarding() {
             <div className="space-y-6 animate-fade-in">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="w-8 h-8 text-primary" />
+                  <BookOpen className="w-8 h-8 text-primary" aria-hidden="true" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">What's your major?</h2>
                 <p className="text-muted-foreground">We'll recommend resources specific to your field</p>
@@ -178,7 +179,7 @@ export default function Onboarding() {
             <div className="space-y-6 animate-fade-in">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-8 h-8 text-primary" />
+                  <Calendar className="w-8 h-8 text-primary" aria-hidden="true" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">What year are you?</h2>
                 <p className="text-muted-foreground">This helps us tailor advice to your experience level</p>
@@ -211,7 +212,7 @@ export default function Onboarding() {
               className="gap-2"
               data-testid="button-back"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               Back
             </Button>
             
@@ -223,13 +224,13 @@ export default function Onboarding() {
             >
               {step === 3 ? (
                 <>
-                  {completeOnboarding.isPending ? "Saving..." : "Get Started"}
-                  <Sparkles className="w-4 h-4" />
+                  {completeOnboarding.isPending ? "Saving…" : "Get Started"}
+                  <Sparkles className="w-4 h-4" aria-hidden="true" />
                 </>
               ) : (
                 <>
                   Continue
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </>
               )}
             </Button>

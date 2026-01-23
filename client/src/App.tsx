@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,6 +11,7 @@ import Landing from "@/pages/landing";
 import Onboarding from "@/pages/onboarding";
 import Dashboard from "@/pages/dashboard";
 import SharedAnswerPage from "@/pages/shared-answer";
+import StudySpots from "@/pages/study-spots";
 import type { UserProfile } from "@shared/schema";
 
 function AuthenticatedRoutes() {
@@ -52,6 +53,11 @@ function AppRouter() {
     <Switch>
       {/* Shared answer page - accessible without login */}
       <Route path="/share/:shareId" component={SharedAnswerPage} />
+
+      {/* Study Spots page - requires auth */}
+      <Route path="/study-spots">
+        {user ? <StudySpots /> : <Landing />}
+      </Route>
 
       {/* Main routes */}
       <Route path="/">

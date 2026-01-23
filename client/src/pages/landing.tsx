@@ -4,13 +4,18 @@ import { GraduationCap, Brain, Calendar, CheckSquare, MessageSquare, Share2, Spa
 export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip link for keyboard navigation */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md">
+        Skip to content
+      </a>
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-primary" />
+                <GraduationCap className="w-5 h-5 text-primary" aria-hidden="true" />
               </div>
               <span className="text-lg font-semibold">Study Buddy</span>
             </div>
@@ -27,13 +32,13 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section id="main-content" className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="space-y-8 animate-fade-in">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm text-primary">
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4" aria-hidden="true" />
                 <span>AI-Powered Study Assistant</span>
               </div>
               
@@ -51,7 +56,7 @@ export default function Landing() {
                 <Button size="lg" className="gap-2" asChild data-testid="button-get-started">
                   <a href="/api/login">
                     Get Started Free
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </a>
                 </Button>
                 <Button size="lg" variant="outline" asChild data-testid="button-learn-more">
@@ -78,7 +83,7 @@ export default function Landing() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 pb-4 border-b border-border">
                     <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Brain className="w-5 h-5 text-primary" />
+                      <Brain className="w-5 h-5 text-primary" aria-hidden="true" />
                     </div>
                     <div>
                       <p className="font-medium">Study Buddy AI</p>
@@ -110,10 +115,10 @@ export default function Landing() {
               
               {/* Floating elements */}
               <div className="absolute -top-4 -right-4 p-3 rounded-xl bg-card border border-border shadow-lg animate-fade-in" style={{ animationDelay: "0.4s" }}>
-                <Calendar className="w-6 h-6 text-primary" />
+                <Calendar className="w-6 h-6 text-primary" aria-hidden="true" />
               </div>
               <div className="absolute -bottom-4 -left-4 p-3 rounded-xl bg-card border border-border shadow-lg animate-fade-in" style={{ animationDelay: "0.6s" }}>
-                <CheckSquare className="w-6 h-6 text-green-500" />
+                <CheckSquare className="w-6 h-6 text-green-500" aria-hidden="true" />
               </div>
             </div>
           </div>
@@ -179,7 +184,7 @@ export default function Landing() {
           <Button size="lg" className="gap-2" asChild data-testid="button-cta-start">
             <a href="/api/login">
               Start Studying Smarter
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </Button>
         </div>
@@ -190,7 +195,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-              <GraduationCap className="w-4 h-4 text-primary" />
+              <GraduationCap className="w-4 h-4 text-primary" aria-hidden="true" />
             </div>
             <span className="text-sm font-medium">Study Buddy</span>
           </div>
@@ -206,7 +211,7 @@ export default function Landing() {
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
     <div className="p-6 rounded-xl bg-card border border-border hover-elevate transition-colors" data-testid={`card-feature-${title.toLowerCase().replace(/\s+/g, '-')}`}>
-      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4">
+      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4" aria-hidden="true">
         {icon}
       </div>
       <h3 className="text-lg font-semibold mb-2">{title}</h3>

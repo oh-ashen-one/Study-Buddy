@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback } from "react";
+import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -7,13 +8,31 @@ import { ChatInterface } from "@/components/chat-interface";
 import { ScheduleView } from "@/components/schedule-view";
 import { TasksView } from "@/components/tasks-view";
 import { CalendarView } from "@/components/calendar-view";
+import StudySpots from "@/pages/study-spots";
 import type { UserProfile } from "@shared/schema";
 
-type View = "chat" | "schedule" | "tasks" | "calendar";
+type View = "chat" | "schedule" | "tasks" | "calendar" | "spots";
+
+const VALID_VIEWS: View[] = ["chat", "schedule", "tasks", "calendar", "spots"];
+
+function getViewFromUrl(): View {
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get("view");
+  if (view && VALID_VIEWS.includes(view as View)) {
+    return view as View;
+  }
+  return "chat";
+}
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [activeView, setActiveView] = useState<View>("chat");
+  const [, setLocation] = useLocation();
+  const activeView = getViewFromUrl();
+
+  const setActiveView = useCallback((view: View) => {
+    const url = view === "chat" ? "/" : `/?view=${view}`;
+    setLocation(url);
+  }, [setLocation]);
 
   const { data: profile } = useQuery<UserProfile>({
     queryKey: ["/api/profile"],
@@ -51,6 +70,7 @@ export default function Dashboard() {
             {activeView === "schedule" && <ScheduleView />}
             {activeView === "tasks" && <TasksView />}
             {activeView === "calendar" && <CalendarView />}
+            {activeView === "spots" && <StudySpots />}
           </main>
         </div>
       </div>
