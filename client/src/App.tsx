@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -56,16 +56,18 @@ function AppRouter() {
 
       {/* Study Spots page - requires auth */}
       <Route path="/study-spots">
-        {user ? <StudySpots /> : <Landing />}
+        {() => (user ? <StudySpots /> : <Landing />)}
       </Route>
 
       {/* Main routes */}
       <Route path="/">
-        {user ? <AuthenticatedRoutes /> : <Landing />}
+        {() => (user ? <AuthenticatedRoutes /> : <Landing />)}
       </Route>
 
-      {/* Fallback */}
-      <Route component={NotFound} />
+      {/* Fallback - must match any path */}
+      <Route path="/:rest*">
+        {() => <NotFound />}
+      </Route>
     </Switch>
   );
 }
