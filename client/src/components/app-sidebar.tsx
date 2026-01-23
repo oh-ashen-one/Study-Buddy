@@ -12,27 +12,29 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { 
-  MessageSquare, 
-  Calendar, 
-  CheckSquare, 
-  CalendarDays, 
+import {
+  MessageSquare,
+  Calendar,
+  CheckSquare,
+  CalendarDays,
   LogOut,
   GraduationCap,
   Settings,
-  MapPin
+  MapPin,
+  Home
 } from "lucide-react";
 import type { User } from "@shared/models/auth";
 import type { UserProfile } from "@shared/schema";
 
 interface AppSidebarProps {
   activeView: string;
-  onViewChange: (view: "chat" | "schedule" | "tasks" | "calendar" | "spots") => void;
+  onViewChange: (view: "home" | "chat" | "schedule" | "tasks" | "calendar" | "spots") => void;
   user: User | null | undefined;
   profile: UserProfile | undefined;
 }
 
 const menuItems = [
+  { id: "home", title: "Home", icon: Home },
   { id: "chat", title: "AI Assistant", icon: MessageSquare },
   { id: "schedule", title: "Schedule", icon: Calendar },
   { id: "tasks", title: "Tasks", icon: CheckSquare },
