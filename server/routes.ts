@@ -4,10 +4,64 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated, registerAuthRoutes } from "./replit_integrations/auth";
 import OpenAI from "openai";
 import { randomUUID } from "crypto";
+import { z } from "zod";
+import {
+  insertUserProfileSchema,
+  insertCourseSchema,
+  insertTaskSchema,
+  insertSharedAnswerSchema,
+} from "@shared/schema";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
   baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+});
+
+// Validation schemas for API requests
+const profileUpdateSchema = insertUserProfileSchema.partial().extend({
+  university: z.string().max(200).optional().nullable(),
+  major: z.string().max(100).optional().nullable(),
+  year: z.enum(["Freshman", "Sophomore", "Junior", "Senior", "Graduate"]).optional().nullable(),
+  onboardingComplete: z.boolean().optional(),
+});
+
+const scheduleParseSchema = z.object({
+  scheduleText: z.string().min(1, "Schedule text is required").max(10000),
+});
+
+const courseBulkSchema = z.object({
+  courses: z.array(
+    insertCourseSchema.omit({ userId: true }).extend({
+      name: z.string().min(1).max(200),
+      code: z.string().max(20).optional().nullable(),
+      professor: z.string().max(100).optional().nullable(),
+      location: z.string().max(100).optional().nullable(),
+      days: z.array(z.string()).optional().nullable(),
+      startTime: z.string().max(20).optional().nullable(),
+      endTime: z.string().max(20).optional().nullable(),
+    })
+  ),
+});
+
+const taskCreateSchema = insertTaskSchema.omit({ userId: true }).extend({
+  title: z.string().min(1, "Title is required").max(500),
+  description: z.string().max(2000).optional().nullable(),
+  dueDate: z.string().datetime().optional().nullable(),
+  courseId: z.number().int().positive().optional().nullable(),
+  priority: z.enum(["low", "medium", "high"]).optional(),
+});
+
+const taskUpdateSchema = taskCreateSchema.partial().extend({
+  completed: z.boolean().optional(),
+});
+
+const chatMessageSchema = z.object({
+  content: z.string().min(1, "Message content is required").max(10000),
+});
+
+const sharedAnswerCreateSchema = z.object({
+  question: z.string().max(2000).optional(),
+  answer: z.string().min(1, "Answer is required").max(50000),
 });
 
 export async function registerRoutes(
@@ -33,7 +87,16 @@ export async function registerRoutes(
   app.post("/api/profile", isAuthenticated, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;
-      const { university, major, year, onboardingComplete } = req.body;
+      
+      const parseResult = profileUpdateSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: parseResult.error.flatten() 
+        });
+      }
+      
+      const { university, major, year, onboardingComplete } = parseResult.data;
 
       let profile = await storage.getProfileByUserId(userId);
 
@@ -75,11 +138,15 @@ export async function registerRoutes(
 
   app.post("/api/courses/parse", isAuthenticated, async (req: any, res: Response) => {
     try {
-      const { scheduleText } = req.body;
-
-      if (!scheduleText) {
-        return res.status(400).json({ error: "Schedule text is required" });
+      const parseResult = scheduleParseSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: parseResult.error.flatten() 
+        });
       }
+
+      const { scheduleText } = parseResult.data;
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -119,13 +186,18 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   app.post("/api/courses/bulk", isAuthenticated, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;
-      const { courses: coursesToCreate } = req.body;
-
-      if (!Array.isArray(coursesToCreate)) {
-        return res.status(400).json({ error: "Courses array is required" });
+      
+      const parseResult = courseBulkSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: parseResult.error.flatten() 
+        });
       }
 
-      const coursesWithUser = coursesToCreate.map((c: any) => ({
+      const { courses: coursesToCreate } = parseResult.data;
+
+      const coursesWithUser = coursesToCreate.map((c) => ({
         ...c,
         userId,
         days: c.days || [],
@@ -142,6 +214,9 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   app.delete("/api/courses/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
+      if (isNaN(courseId) || courseId < 1) {
+        return res.status(400).json({ error: "Invalid course ID" });
+      }
       await storage.deleteCourse(courseId);
       res.status(204).send();
     } catch (error) {
@@ -165,11 +240,16 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   app.post("/api/tasks", isAuthenticated, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;
-      const { title, description, dueDate, courseId, priority } = req.body;
-
-      if (!title) {
-        return res.status(400).json({ error: "Title is required" });
+      
+      const parseResult = taskCreateSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: parseResult.error.flatten() 
+        });
       }
+
+      const { title, description, dueDate, courseId, priority } = parseResult.data;
 
       const task = await storage.createTask({
         userId,
@@ -192,8 +272,19 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   app.patch("/api/tasks/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
       const taskId = parseInt(req.params.id);
-      const updates = req.body;
+      if (isNaN(taskId) || taskId < 1) {
+        return res.status(400).json({ error: "Invalid task ID" });
+      }
 
+      const parseResult = taskUpdateSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: parseResult.error.flatten() 
+        });
+      }
+
+      const updates = parseResult.data;
       const task = await storage.updateTask(taskId, updates);
       res.json(task);
     } catch (error) {
@@ -205,6 +296,9 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   app.delete("/api/tasks/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
       const taskId = parseInt(req.params.id);
+      if (isNaN(taskId) || taskId < 1) {
+        return res.status(400).json({ error: "Invalid task ID" });
+      }
       await storage.deleteTask(taskId);
       res.status(204).send();
     } catch (error) {
@@ -228,11 +322,16 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   app.post("/api/study-chats/message", isAuthenticated, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;
-      const { content } = req.body;
-
-      if (!content) {
-        return res.status(400).json({ error: "Message content is required" });
+      
+      const parseResult = chatMessageSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: parseResult.error.flatten() 
+        });
       }
+
+      const { content } = parseResult.data;
 
       // Get or create current chat
       const chat = await storage.getCurrentStudyChat(userId);
@@ -317,10 +416,10 @@ Be encouraging but realistic. Tailor your advice to the student's level.`;
       let fullResponse = "";
 
       for await (const chunk of stream) {
-        const content = chunk.choices[0]?.delta?.content || "";
-        if (content) {
-          fullResponse += content;
-          res.write(`data: ${JSON.stringify({ content })}\n\n`);
+        const chunkContent = chunk.choices[0]?.delta?.content || "";
+        if (chunkContent) {
+          fullResponse += chunkContent;
+          res.write(`data: ${JSON.stringify({ content: chunkContent })}\n\n`);
         }
       }
 
@@ -348,6 +447,11 @@ Be encouraging but realistic. Tailor your advice to the student's level.`;
   app.get("/api/shared-answers/:shareId", async (req: Request, res: Response) => {
     try {
       const { shareId } = req.params;
+      
+      if (!shareId || shareId.length > 100) {
+        return res.status(400).json({ error: "Invalid share ID" });
+      }
+      
       const answer = await storage.getSharedAnswer(shareId);
       
       if (!answer) {
@@ -364,11 +468,16 @@ Be encouraging but realistic. Tailor your advice to the student's level.`;
   app.post("/api/shared-answers", isAuthenticated, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;
-      const { question, answer } = req.body;
-
-      if (!answer) {
-        return res.status(400).json({ error: "Answer is required" });
+      
+      const parseResult = sharedAnswerCreateSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: parseResult.error.flatten() 
+        });
       }
+
+      const { question, answer } = parseResult.data;
 
       const shareId = randomUUID();
       const sharedAnswer = await storage.createSharedAnswer({

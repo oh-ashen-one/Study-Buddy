@@ -34,7 +34,7 @@ export default function Landing() {
             <div className="space-y-8 animate-fade-in">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm text-primary">
                 <Sparkles className="w-4 h-4" />
-                <span>AI-Powered Study Assistant</span>
+                <span>For students who want to get things done</span>
               </div>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
@@ -43,8 +43,7 @@ export default function Landing() {
               </h1>
               
               <p className="text-lg text-muted-foreground max-w-lg">
-                Stop juggling between apps. Study Buddy combines AI chat, schedule management, 
-                and task tracking into one clean, focused experience designed for students.
+                One place for your schedule, tasks, and AI study help. No more jumping between apps.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -125,10 +124,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Everything You Need to <span className="gradient-text">Succeed</span>
+              What's <span className="gradient-text">Inside</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Built specifically for college students who want to stay organized and ace their classes
+              Tools built for how students actually work
             </p>
           </div>
           
@@ -136,32 +135,32 @@ export default function Landing() {
             <FeatureCard 
               icon={<MessageSquare className="w-6 h-6" />}
               title="AI Study Assistant"
-              description="Get personalized study advice, resource recommendations, and help with any subject. Your AI knows your major, courses, and learning style."
+              description="Ask questions about any subject. Get study tips and resource recommendations based on your major and courses."
             />
             <FeatureCard 
               icon={<Calendar className="w-6 h-6" />}
-              title="Smart Schedule"
-              description="Upload your class schedule with a screenshot or paste it directly. We'll parse it and keep everything organized."
+              title="Schedule"
+              description="Paste your class schedule from your portal. We'll figure out the rest and keep it organized."
             />
             <FeatureCard 
               icon={<CheckSquare className="w-6 h-6" />}
-              title="Task Management"
-              description="Create to-dos, set due dates, and associate tasks with courses. Never miss a deadline again."
+              title="Tasks"
+              description="Track assignments and deadlines. Link tasks to specific courses for easy filtering."
             />
             <FeatureCard 
               icon={<Brain className="w-6 h-6" />}
-              title="Course Context"
-              description="The AI understands your specific courses and recommends relevant YouTube channels, Khan Academy lessons, and study resources."
+              title="Context-Aware AI"
+              description="Tell it your courses once. It remembers and suggests YouTube, Khan Academy, and subreddits that fit."
             />
             <FeatureCard 
               icon={<Share2 className="w-6 h-6" />}
               title="Share Answers"
-              description="Found a great explanation from the AI? Share it with classmates via a link. Collaboration made easy."
+              description="Got a helpful AI response? Share it with classmates via a link."
             />
             <FeatureCard 
               icon={<GraduationCap className="w-6 h-6" />}
-              title="STEM & Pre-Law Focus"
-              description="Extra-deep recommendations for STEM students and future lawyers. We know these paths require specialized resources."
+              title="STEM & Pre-Law Support"
+              description="Extra recommendations for STEM majors and future lawyers. We know these paths need specialized help."
             />
           </div>
         </div>
@@ -171,14 +170,14 @@ export default function Landing() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Ready to Transform Your Study Habits?
+            Ready to try it?
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Join thousands of students who are already studying smarter, not harder.
+            Free to use. No credit card. Set up in 2 minutes.
           </p>
           <Button size="lg" className="gap-2" asChild data-testid="button-cta-start">
             <a href="/api/login">
-              Start Studying Smarter
+              Get Started
               <ArrowRight className="w-4 h-4" />
             </a>
           </Button>
