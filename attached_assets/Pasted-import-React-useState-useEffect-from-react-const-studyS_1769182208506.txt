@@ -1,0 +1,499 @@
+import React, { useState, useEffect } from 'react';
+
+const studySpots = [
+  { id: 1, name: "The Quiet Corner", type: "library", lat: 35, lng: 42, rating: 4.8, amenities: ["wifi", "outlets", "quiet"], open: true, hours: "Until 11pm", reviews: 23, description: "Hidden gem on the 3rd floor, perfect for deep focus" },
+  { id: 2, name: "Midnight Brew", type: "cafe", lat: 58, lng: 28, rating: 4.5, amenities: ["wifi", "food", "late"], open: true, hours: "Until 2am", reviews: 67, description: "Best espresso near campus, cozy vibes" },
+  { id: 3, name: "Scholar's Grove", type: "outdoor", lat: 25, lng: 65, rating: 4.2, amenities: ["quiet", "outlets"], open: true, hours: "Always open", reviews: 12, description: "Shaded benches with outlets hidden in the rocks" },
+  { id: 4, name: "The Archives", type: "library", lat: 70, lng: 55, rating: 4.9, amenities: ["wifi", "outlets", "quiet"], open: false, hours: "Opens 8am", reviews: 89, description: "Old library wing, smells like wisdom" },
+  { id: 5, name: "Bean There", type: "cafe", lat: 45, lng: 75, rating: 4.3, amenities: ["wifi", "food", "outlets"], open: true, hours: "Until 10pm", reviews: 34, description: "Friendly baristas, great study playlist" },
+  { id: 6, name: "Rooftop Retreat", type: "campus", lat: 82, lng: 38, rating: 4.7, amenities: ["quiet", "wifi"], open: true, hours: "Until 9pm", reviews: 45, description: "Secret rooftop access, incredible sunset views" },
+];
+
+const typeIcons = {
+  cafe: "☕",
+  library: "📚",
+  outdoor: "🌳",
+  campus: "🏛️"
+};
+
+const amenityIcons = {
+  wifi: { icon: "📶", label: "WiFi" },
+  outlets: { icon: "⚡", label: "Outlets" },
+  quiet: { icon: "🤫", label: "Quiet" },
+  food: { icon: "🍕", label: "Food" },
+  late: { icon: "🌙", label: "Open Late" }
+};
+
+export default function MaraudersMap() {
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+  const [filters, setFilters] = useState([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [userPosition, setUserPosition] = useState({ x: 50, y: 50 });
+  const [footstepFrame, setFootstepFrame] = useState(0);
+
+  useEffect(() => {
+    setTimeout(() => setLoaded(true), 500);
+    const interval = setInterval(() => {
+      setFootstepFrame(f => (f + 1) % 4);
+    }, 600);
+    return () => clearInterval(interval);
+  }, []);
+
+  const toggleFilter = (filter) => {
+    setFilters(prev => 
+      prev.includes(filter) 
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
+  };
+
+  const filteredSpots = studySpots.filter(spot => {
+    if (filters.length === 0) return true;
+    if (filters.includes('open') && !spot.open) return false;
+    return filters.every(f => f === 'open' || spot.amenities.includes(f));
+  });
+
+  return (
+    <div style={{
+      width: '100%',
+      height: '100vh',
+      background: `
+        radial-gradient(ellipse at 20% 80%, rgba(139, 90, 43, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(101, 67, 33, 0.1) 0%, transparent 50%),
+        linear-gradient(180deg, #2a1f14 0%, #1a1410 50%, #0f0c09 100%)
+      `,
+      fontFamily: "'Crimson Text', 'Times New Roman', serif",
+      overflow: 'hidden',
+      position: 'relative'
+    }}>
+      
+      {/* Parchment texture overlay */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        opacity: 0.03,
+        pointerEvents: 'none'
+      }} />
+
+      {/* Header */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        padding: '20px',
+        textAlign: 'center',
+        zIndex: 10,
+        background: 'linear-gradient(180deg, rgba(15,12,9,0.95) 0%, transparent 100%)'
+      }}>
+        <h1 style={{
+          fontSize: '28px',
+          fontWeight: 400,
+          color: '#c9a227',
+          textShadow: '0 0 30px rgba(201, 162, 39, 0.5), 0 0 60px rgba(201, 162, 39, 0.3)',
+          letterSpacing: '3px',
+          margin: 0,
+          fontStyle: 'italic',
+          opacity: loaded ? 1 : 0,
+          transform: loaded ? 'translateY(0)' : 'translateY(-20px)',
+          transition: 'all 1.5s ease-out'
+        }}>
+          I solemnly swear I need to study
+        </h1>
+        <p style={{
+          fontSize: '12px',
+          color: 'rgba(201, 162, 39, 0.5)',
+          letterSpacing: '6px',
+          textTransform: 'uppercase',
+          marginTop: '8px',
+          opacity: loaded ? 1 : 0,
+          transition: 'opacity 2s ease-out 0.5s'
+        }}>
+          Study Buddy Map
+        </p>
+      </div>
+
+      {/* Filter Bar */}
+      <div style={{
+        position: 'absolute',
+        top: '90px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: '10px',
+        zIndex: 10,
+        opacity: loaded ? 1 : 0,
+        transition: 'opacity 1s ease-out 1s'
+      }}>
+        {['open', 'wifi', 'quiet', 'outlets', 'food'].map(filter => (
+          <button
+            key={filter}
+            onClick={() => toggleFilter(filter)}
+            style={{
+              background: filters.includes(filter) 
+                ? 'rgba(201, 162, 39, 0.3)' 
+                : 'rgba(42, 31, 20, 0.8)',
+              border: `1px solid ${filters.includes(filter) ? '#c9a227' : 'rgba(201, 162, 39, 0.3)'}`,
+              borderRadius: '20px',
+              padding: '6px 14px',
+              color: filters.includes(filter) ? '#c9a227' : 'rgba(201, 162, 39, 0.7)',
+              fontSize: '11px',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              transition: 'all 0.3s ease',
+              boxShadow: filters.includes(filter) ? '0 0 15px rgba(201, 162, 39, 0.3)' : 'none'
+            }}
+          >
+            {filter === 'open' ? '🟢 Open' : amenityIcons[filter]?.icon + ' ' + filter}
+          </button>
+        ))}
+      </div>
+
+      {/* Map Area */}
+      <div style={{
+        position: 'absolute',
+        top: '140px',
+        left: '20px',
+        right: '20px',
+        bottom: '20px',
+        background: `
+          radial-gradient(ellipse at center, rgba(62, 47, 32, 0.5) 0%, rgba(26, 20, 16, 0.8) 100%),
+          linear-gradient(rgba(139, 90, 43, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(139, 90, 43, 0.1) 1px, transparent 1px)
+        `,
+        backgroundSize: '100% 100%, 50px 50px, 50px 50px',
+        border: '3px solid rgba(139, 90, 43, 0.4)',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        boxShadow: 'inset 0 0 100px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.5)',
+        opacity: loaded ? 1 : 0,
+        transition: 'opacity 1.5s ease-out 0.3s'
+      }}>
+        
+        {/* Decorative compass */}
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          right: '20px',
+          width: '60px',
+          height: '60px',
+          opacity: 0.4
+        }}>
+          <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#8b5a2b" strokeWidth="1"/>
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#8b5a2b" strokeWidth="0.5"/>
+            <text x="50" y="15" textAnchor="middle" fill="#c9a227" fontSize="12" fontFamily="serif">N</text>
+            <text x="50" y="95" textAnchor="middle" fill="#8b5a2b" fontSize="10" fontFamily="serif">S</text>
+            <text x="10" y="54" textAnchor="middle" fill="#8b5a2b" fontSize="10" fontFamily="serif">W</text>
+            <text x="90" y="54" textAnchor="middle" fill="#8b5a2b" fontSize="10" fontFamily="serif">E</text>
+            <polygon points="50,20 45,50 50,45 55,50" fill="#c9a227"/>
+            <polygon points="50,80 45,50 50,55 55,50" fill="#8b5a2b"/>
+          </svg>
+        </div>
+
+        {/* Ink path decorations */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.3 }}>
+          <path d="M 0,30% Q 25%,25% 50%,35% T 100%,30%" stroke="#8b5a2b" strokeWidth="1" fill="none" strokeDasharray="5,5"/>
+          <path d="M 10%,60% Q 40%,70% 60%,55% T 90%,65%" stroke="#8b5a2b" strokeWidth="1" fill="none" strokeDasharray="3,7"/>
+          <path d="M 20%,10% L 20%,90%" stroke="rgba(139,90,43,0.2)" strokeWidth="0.5"/>
+          <path d="M 50%,5% L 50%,95%" stroke="rgba(139,90,43,0.2)" strokeWidth="0.5"/>
+          <path d="M 80%,10% L 80%,90%" stroke="rgba(139,90,43,0.2)" strokeWidth="0.5"/>
+        </svg>
+
+        {/* User position with footsteps */}
+        <div style={{
+          position: 'absolute',
+          left: `${userPosition.x}%`,
+          top: `${userPosition.y}%`,
+          transform: 'translate(-50%, -50%)',
+          zIndex: 5
+        }}>
+          <div style={{
+            fontSize: '16px',
+            animation: 'pulse 2s ease-in-out infinite',
+            textShadow: '0 0 10px rgba(201, 162, 39, 0.8)'
+          }}>
+            👣
+          </div>
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '9px',
+            color: '#c9a227',
+            whiteSpace: 'nowrap',
+            fontStyle: 'italic',
+            opacity: 0.7
+          }}>
+            You are here
+          </div>
+        </div>
+
+        {/* Study Spots */}
+        {filteredSpots.map((spot, index) => (
+          <div
+            key={spot.id}
+            onClick={() => setSelectedSpot(spot)}
+            style={{
+              position: 'absolute',
+              left: `${spot.lng}%`,
+              top: `${spot.lat}%`,
+              transform: 'translate(-50%, -50%)',
+              cursor: 'pointer',
+              opacity: loaded ? (spot.open ? 1 : 0.4) : 0,
+              transition: `opacity 0.5s ease-out ${0.5 + index * 0.1}s, transform 0.2s ease`,
+              zIndex: selectedSpot?.id === spot.id ? 10 : 1
+            }}
+          >
+            {/* Glow effect */}
+            <div style={{
+              position: 'absolute',
+              inset: '-15px',
+              background: spot.open 
+                ? 'radial-gradient(circle, rgba(201, 162, 39, 0.4) 0%, transparent 70%)'
+                : 'none',
+              animation: spot.open ? 'glow 3s ease-in-out infinite' : 'none',
+              animationDelay: `${index * 0.3}s`
+            }} />
+            
+            {/* Pin */}
+            <div style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: `radial-gradient(circle at 30% 30%, rgba(201, 162, 39, 0.9), rgba(139, 90, 43, 0.8))`,
+              border: '2px solid #c9a227',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '18px',
+              boxShadow: spot.open 
+                ? '0 0 20px rgba(201, 162, 39, 0.5), inset 0 0 10px rgba(0,0,0,0.3)'
+                : 'inset 0 0 10px rgba(0,0,0,0.5)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+            }}>
+              {typeIcons[spot.type]}
+            </div>
+            
+            {/* Label */}
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              marginTop: '5px',
+              whiteSpace: 'nowrap',
+              fontSize: '11px',
+              color: '#c9a227',
+              fontStyle: 'italic',
+              textShadow: '0 0 10px rgba(0,0,0,0.8)',
+              opacity: 0.9
+            }}>
+              {spot.name}
+            </div>
+
+            {/* Hot spot footsteps */}
+            {spot.reviews > 50 && spot.open && (
+              <div style={{
+                position: 'absolute',
+                fontSize: '10px',
+                opacity: 0.5,
+                left: footstepFrame % 2 === 0 ? '-20px' : '45px',
+                top: footstepFrame < 2 ? '-5px' : '30px',
+                transition: 'all 0.3s ease'
+              }}>
+                👣
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Spot Detail Card */}
+      {selectedSpot && (
+        <div style={{
+          position: 'absolute',
+          bottom: '40px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'min(400px, calc(100% - 60px))',
+          background: `linear-gradient(145deg, rgba(62, 47, 32, 0.95), rgba(42, 31, 20, 0.98))`,
+          border: '2px solid rgba(201, 162, 39, 0.5)',
+          borderRadius: '12px',
+          padding: '20px',
+          zIndex: 20,
+          boxShadow: '0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201, 162, 39, 0.2)',
+          animation: 'slideUp 0.4s ease-out'
+        }}>
+          {/* Close button */}
+          <button
+            onClick={() => setSelectedSpot(null)}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              background: 'none',
+              border: 'none',
+              color: 'rgba(201, 162, 39, 0.6)',
+              fontSize: '20px',
+              cursor: 'pointer',
+              padding: '5px'
+            }}
+          >
+            ✕
+          </button>
+
+          {/* Spot header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+            <span style={{ fontSize: '28px' }}>{typeIcons[selectedSpot.type]}</span>
+            <div>
+              <h3 style={{
+                margin: 0,
+                fontSize: '20px',
+                color: '#c9a227',
+                fontWeight: 400,
+                fontStyle: 'italic'
+              }}>
+                {selectedSpot.name}
+              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                <span style={{ color: '#ffd700', fontSize: '14px' }}>
+                  {'★'.repeat(Math.floor(selectedSpot.rating))}
+                  {'☆'.repeat(5 - Math.floor(selectedSpot.rating))}
+                </span>
+                <span style={{ color: 'rgba(201, 162, 39, 0.6)', fontSize: '12px' }}>
+                  {selectedSpot.rating} · {selectedSpot.reviews} reviews
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Status */}
+          <div style={{
+            display: 'inline-block',
+            padding: '4px 12px',
+            borderRadius: '12px',
+            fontSize: '11px',
+            fontWeight: 500,
+            background: selectedSpot.open ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+            color: selectedSpot.open ? '#81c784' : '#e57373',
+            marginBottom: '12px'
+          }}>
+            {selectedSpot.open ? '● Open' : '● Closed'} · {selectedSpot.hours}
+          </div>
+
+          {/* Description */}
+          <p style={{
+            color: 'rgba(201, 162, 39, 0.8)',
+            fontSize: '13px',
+            fontStyle: 'italic',
+            margin: '0 0 15px 0',
+            lineHeight: 1.5
+          }}>
+            "{selectedSpot.description}"
+          </p>
+
+          {/* Amenities */}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
+            {selectedSpot.amenities.map(amenity => (
+              <span key={amenity} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '4px 10px',
+                background: 'rgba(201, 162, 39, 0.15)',
+                borderRadius: '8px',
+                fontSize: '12px',
+                color: 'rgba(201, 162, 39, 0.9)'
+              }}>
+                {amenityIcons[amenity]?.icon} {amenityIcons[amenity]?.label}
+              </span>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button style={{
+              flex: 1,
+              padding: '10px',
+              background: 'linear-gradient(145deg, #c9a227, #a68523)',
+              border: 'none',
+              borderRadius: '8px',
+              color: '#1a1410',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit'
+            }}>
+              Get Directions 🧭
+            </button>
+            <button style={{
+              flex: 1,
+              padding: '10px',
+              background: 'transparent',
+              border: '1px solid rgba(201, 162, 39, 0.5)',
+              borderRadius: '8px',
+              color: '#c9a227',
+              fontSize: '13px',
+              cursor: 'pointer',
+              fontFamily: 'inherit'
+            }}>
+              Add Review ✍️
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Add Spot Button (Wax Seal style) */}
+      <button
+        onClick={() => setShowAddForm(true)}
+        style={{
+          position: 'absolute',
+          bottom: '30px',
+          right: '30px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          background: `radial-gradient(circle at 35% 35%, #8b2500, #5c1a00)`,
+          border: '3px solid #a52a2a',
+          color: '#ffd700',
+          fontSize: '24px',
+          cursor: 'pointer',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.4), inset 0 -2px 5px rgba(0,0,0,0.3)',
+          zIndex: 15,
+          opacity: loaded ? 1 : 0,
+          transition: 'opacity 1s ease-out 1.5s, transform 0.2s ease',
+          display: selectedSpot ? 'none' : 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        +
+      </button>
+
+      {/* CSS Animations */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        @keyframes glow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.2); }
+        }
+        
+        @keyframes slideUp {
+          from { opacity: 0; transform: translate(-50%, 20px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
+        }
+      `}</style>
+    </div>
+  );
+}
