@@ -1,0 +1,116 @@
+# Study Buddy - AI-Powered College Command Center
+
+## Overview
+Build "Study Buddy" - an all-in-one web app that helps college students organize their chaotic academic lives. Think Notion + Linear meets a college-specific AI assistant. Dark mode by default, clean/minimal design.
+
+## Tech Stack
+Choose whatever you think is best for Replit, but needs to support:
+- OAuth (Google/Gmail integration)
+- Database for user accounts and data
+- OpenAI API integration (Replit's built-in)
+- File upload handling (for screenshot OCR)
+- External API calls (Google Places, calendar syncs)
+
+## User Onboarding Flow
+1. Sign up with any email (no .edu requirement)
+2. Ask: What university are you attending?
+3. Ask: What's your major?
+4. Ask: What year are you? (Freshman/Sophomore/Junior/Senior/Grad)
+5. Optional: Connect Gmail for full features
+6. Land on main dashboard with AI chat front and center
+
+## Features (Build in This Order)
+
+### 1. AI Chat - PRIMARY FEATURE
+- First thing users see: a chat bar asking "You're a college student - what do you need help with?"
+- Powered by OpenAI API
+- AI has context about: user's university, major, year, schedule (once uploaded), and emails (if connected)
+- Can answer questions like:
+  - "What's the best way to study for organic chemistry?"
+  - "Find me YouTube channels for linear algebra"
+  - "What are good resources for LSAT prep?"
+- AI dynamically recommends study resources (YouTube, Khan Academy, Coursera, subreddits, etc.) based on their courses
+- STEM and Law students get extra-relevant recommendations (AI should recognize these majors and go deeper)
+- Users can share AI answers via shareable link
+
+### 2. Schedule Upload
+- Two input methods:
+  - Screenshot upload → OCR extracts course info → user confirms/edits
+  - Copy-paste entire schedule (Ctrl+A, Ctrl+C from university portal) → AI parses it
+- Extracted data: Course names, course codes, times, professors, locations
+- Store schedule in user's profile
+- AI chat gains context about their specific courses after upload
+
+### 3. Gmail Integration
+- OAuth connection to Gmail
+- Permission levels (user chooses how much access):
+  - Read-only: AI scans emails, extracts deadlines, suggests to-dos
+  - Read + Label: AI marks emails as processed
+  - Full access: AI can send emails on user's behalf
+- The more access they grant, the more features unlock
+- Auto-extraction: When professor emails "Essay due Friday," AI detects this and suggests adding to to-do list
+- User approves or dismisses suggested to-dos
+
+### 4. Native To-Do List + Calendar
+- Built-in to-do list living inside Study Buddy
+- Users can manually add tasks
+- AI auto-suggests tasks from Gmail (user approves)
+- Each task can have:
+  - Due date/time
+  - Course association
+  - Priority level
+  - Email reminder (user sets when to be reminded)
+- Calendar view showing all tasks/deadlines
+- Sync integrations:
+  - Google Calendar (two-way sync)
+  - Apple Calendar (export .ics)
+  - Notion (API integration)
+  - Todoist (API integration)
+
+### 5. Study Spot Finder
+- User's university location as center point
+- Two types of spots:
+  - Off-campus: Pull from Google Places API (coffee shops, public libraries, co-working spaces)
+  - On-campus: Crowdsourced from students ("this corner of the library is great")
+- Each spot can have:
+  - Student ratings/reviews
+  - Tags: quiet, wifi, outlets, food nearby, open late
+  - Photos
+- Students can add new spots for their university
+- Filter by: distance, rating, amenities, open now
+
+## Design Requirements
+- Dark mode by default (no light mode toggle needed for V1)
+- Clean, minimal aesthetic like Notion and Linear
+- No clutter - college students are stressed, don't overwhelm them
+- Mobile-responsive (many students on phones)
+- Fast loading - no unnecessary animations
+
+## Database Needs
+- Users table: email, university, major, year, OAuth tokens, preferences
+- Schedules table: user_id, courses (JSON or relational)
+- Tasks table: user_id, title, due_date, course_id, completed, reminder_time
+- Study spots table: name, location, university, type (on/off campus), ratings, amenities, submitted_by
+- Shared AI answers table: answer_id, content, shareable_link
+
+## APIs to Integrate
+- OpenAI API (use Replit's built-in)
+- Google OAuth + Gmail API
+- Google Places API (for study spots)
+- Google Calendar API
+- Todoist API
+- Notion API
+
+## Future Features (NOT for V1, just notes)
+- Rate My Professor integration (scraping or link paste)
+- Apple Calendar native sync
+- Professor rating system built into app
+- Study groups / friend features
+- Mobile app version
+
+## Important Notes
+- Free to use for now (no payment system needed)
+- Monetization will come later (build with freemium in mind but don't implement yet)
+- Error handling: If OCR fails, gracefully ask user to paste instead
+- If Gmail connection fails, app should still work with manual to-do entry
+- All AI recommendations should be dynamically generated, never manually curated
