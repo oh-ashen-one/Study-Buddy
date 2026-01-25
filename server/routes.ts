@@ -141,7 +141,18 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
 
   app.delete("/api/courses/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
+      const userId = req.user.claims.sub;
       const courseId = parseInt(req.params.id);
+      
+      // Verify ownership before deleting
+      const course = await storage.getCourse(courseId);
+      if (!course) {
+        return res.status(404).json({ error: "Course not found" });
+      }
+      if (course.userId !== userId) {
+        return res.status(403).json({ error: "Not authorized to delete this course" });
+      }
+      
       await storage.deleteCourse(courseId);
       res.status(204).send();
     } catch (error) {
@@ -191,8 +202,18 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
 
   app.patch("/api/tasks/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
+      const userId = req.user.claims.sub;
       const taskId = parseInt(req.params.id);
       const updates = req.body;
+
+      // Verify ownership before updating
+      const existingTask = await storage.getTask(taskId);
+      if (!existingTask) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+      if (existingTask.userId !== userId) {
+        return res.status(403).json({ error: "Not authorized to update this task" });
+      }
 
       const task = await storage.updateTask(taskId, updates);
       res.json(task);
@@ -204,7 +225,18 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
 
   app.delete("/api/tasks/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
+      const userId = req.user.claims.sub;
       const taskId = parseInt(req.params.id);
+      
+      // Verify ownership before deleting
+      const task = await storage.getTask(taskId);
+      if (!task) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+      if (task.userId !== userId) {
+        return res.status(403).json({ error: "Not authorized to delete this task" });
+      }
+      
       await storage.deleteTask(taskId);
       res.status(204).send();
     } catch (error) {
