@@ -5,6 +5,21 @@ import { setupAuth, isAuthenticated, registerAuthRoutes } from "./replit_integra
 import OpenAI from "openai";
 import { randomUUID } from "crypto";
 
+// Typed request for authenticated routes
+interface AuthenticatedRequest extends Request {
+  user: {
+    claims: {
+      sub: string;
+      email?: string;
+      first_name?: string;
+      last_name?: string;
+    };
+    access_token: string;
+    refresh_token?: string;
+    expires_at?: number;
+  };
+}
+
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
   baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
@@ -19,7 +34,7 @@ export async function registerRoutes(
   registerAuthRoutes(app);
 
   // User profile routes
-  app.get("/api/profile", isAuthenticated, async (req: any, res: Response) => {
+  app.get("/api/profile", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const profile = await storage.getProfileByUserId(userId);
@@ -30,7 +45,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/profile", isAuthenticated, async (req: any, res: Response) => {
+  app.post("/api/profile", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const { university, major, year, onboardingComplete } = req.body;
@@ -62,7 +77,7 @@ export async function registerRoutes(
   });
 
   // Course routes
-  app.get("/api/courses", isAuthenticated, async (req: any, res: Response) => {
+  app.get("/api/courses", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const courses = await storage.getCoursesByUserId(userId);
@@ -73,7 +88,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/courses/parse", isAuthenticated, async (req: any, res: Response) => {
+  app.post("/api/courses/parse", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const { scheduleText } = req.body;
 
@@ -116,7 +131,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
     }
   });
 
-  app.post("/api/courses/bulk", isAuthenticated, async (req: any, res: Response) => {
+  app.post("/api/courses/bulk", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const { courses: coursesToCreate } = req.body;
@@ -139,7 +154,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
     }
   });
 
-  app.delete("/api/courses/:id", isAuthenticated, async (req: any, res: Response) => {
+  app.delete("/api/courses/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
       await storage.deleteCourse(courseId);
@@ -151,7 +166,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   });
 
   // Task routes
-  app.get("/api/tasks", isAuthenticated, async (req: any, res: Response) => {
+  app.get("/api/tasks", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const tasks = await storage.getTasksByUserId(userId);
@@ -162,7 +177,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
     }
   });
 
-  app.post("/api/tasks", isAuthenticated, async (req: any, res: Response) => {
+  app.post("/api/tasks", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const { title, description, dueDate, courseId, priority } = req.body;
@@ -189,7 +204,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
     }
   });
 
-  app.patch("/api/tasks/:id", isAuthenticated, async (req: any, res: Response) => {
+  app.patch("/api/tasks/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const taskId = parseInt(req.params.id);
       const updates = req.body;
@@ -202,7 +217,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
     }
   });
 
-  app.delete("/api/tasks/:id", isAuthenticated, async (req: any, res: Response) => {
+  app.delete("/api/tasks/:id", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const taskId = parseInt(req.params.id);
       await storage.deleteTask(taskId);
@@ -214,7 +229,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
   });
 
   // Study chat routes
-  app.get("/api/study-chats/current", isAuthenticated, async (req: any, res: Response) => {
+  app.get("/api/study-chats/current", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const chat = await storage.getCurrentStudyChat(userId);
@@ -225,7 +240,7 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
     }
   });
 
-  app.post("/api/study-chats/message", isAuthenticated, async (req: any, res: Response) => {
+  app.post("/api/study-chats/message", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const { content } = req.body;
@@ -361,7 +376,7 @@ Be encouraging but realistic. Tailor your advice to the student's level.`;
     }
   });
 
-  app.post("/api/shared-answers", isAuthenticated, async (req: any, res: Response) => {
+  app.post("/api/shared-answers", isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const { question, answer } = req.body;
