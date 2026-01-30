@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated, registerAuthRoutes } from "./replit_integrations/auth";
 import OpenAI from "openai";
 import { randomUUID } from "crypto";
+import { aiRateLimit, parseRateLimit } from "./middleware/rateLimit";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -73,7 +74,8 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/courses/parse", isAuthenticated, async (req: any, res: Response) => {
+  // Rate limit schedule parsing (uses AI)
+  app.post("/api/courses/parse", isAuthenticated, parseRateLimit, async (req: any, res: Response) => {
     try {
       const { scheduleText } = req.body;
 
@@ -257,7 +259,8 @@ Only return valid JSON, no explanation. If you can't parse anything, return {"co
     }
   });
 
-  app.post("/api/study-chats/message", isAuthenticated, async (req: any, res: Response) => {
+  // Rate limit AI chat messages
+  app.post("/api/study-chats/message", isAuthenticated, aiRateLimit, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const { content } = req.body;
